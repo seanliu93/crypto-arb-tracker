@@ -1,0 +1,29 @@
+.container {
+    font-family: 'Roboto', sans-serif;
+}
+
+.float-right {
+    float: right;
+}
+.title {
+    color: #7a8280;
+}
+.green {
+    color: green;
+}
+
+.center {
+    text-align: center;
+}
+.normal {
+    color: black;
+}
+.red {
+    color: red;
+}
+
+.spinner {
+    /* position: absolute; */
+    margin-top: 10%;
+    left: 45%;
+}

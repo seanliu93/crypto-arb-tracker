@@ -1,0 +1,23 @@
+.content-container {
+    display: flex;
+}
+
+.left-half {
+    flex: 1;
+}
+
+.right-half {
+    flex: 1;
+}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
+.normal {
+    color: black;
+}

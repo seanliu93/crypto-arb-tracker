@@ -1,0 +1,25 @@
+<mat-card class="container">
+  <mat-card-header class="white">
+    <b>{{ tickerData.exchangeName}} {{ tickerData.fromCurrency}} / {{ tickerData.toCurrency }}</b>
+  </mat-card-header>
+  <mat-card-content class="content-container ">
+    <mat-list class="left-half">
+      <mat-list-item > Price: </mat-list-item>
+      <mat-list-item> Last Update: </mat-list-item>
+      <mat-list-item> Last Trade Volume (From Currency): </mat-list-item>
+      <mat-list-item> Last Trade Volume (To Currency): </mat-list-item>
+      <mat-list-item> Volume 24 Hrs: </mat-list-item>
+    </mat-list>
+    <mat-list class="right-half">
+        <mat-list-item [@green-blink]="blinkState" (click)="changeState()"> 
+          <div [class]="priceColorState">
+            {{getPrice()}}
+          </div> 
+        </mat-list-item>
+        <mat-list-item> {{tickerData.lastUpdateDate | date :'dd-MMM-yyyy hh:mm:ss z'}} </mat-list-item>
+        <mat-list-item> {{tickerData.lastVolume}} {{tickerData.fromCurrency}}</mat-list-item>
+        <mat-list-item> {{getLastVolumeTo()}} </mat-list-item>
+        <mat-list-item> {{tickerData.volume24H}} {{tickerData.fromCurrency}} </mat-list-item>
+      </mat-list>
+  </mat-card-content>
+</mat-card>

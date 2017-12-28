@@ -1,20 +1,49 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="container" style="text-align:center">
+
+  <div *ngIf="appReady">
+    <div class="mat-display-1 title">
+      Crypto Arb Tracker
+    </div>
+    <div>
+      USD/JPY Exchange Rate: {{ cryptoCompareService.usd_jpy_rate }}
+    </div>
+    <mat-card>
+      <mat-card-header class="title">
+        <b>Best Arb</b>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-grid-list cols="3" rowHeight="100px">
+          <mat-grid-tile class="mat-headline">
+            {{ gemini_tickerData.exchangeName }} {{ gemini_tickerData.fromCurrency }} / {{ gemini_tickerData.toCurrency }}
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <div class="mat-headline" [style.color]="getArbColor()">
+              {{ ((bitflyer_tickerData.price/113.24 / gemini_tickerData.price)-1) * 100}} %
+            </div>
+          </mat-grid-tile>
+          <mat-grid-tile class="mat-headline">
+            {{ bitflyer_tickerData.exchangeName }}  {{ bitflyer_tickerData.fromCurrency }} / {{ bitflyer_tickerData.toCurrency }}
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-card-content>
+    </mat-card>
+    <br>
+    <!-- <trading-pair-card *ngIf="gemini_tickerData" [tickerData]="gemini_tickerData"></trading-pair-card>
+    <trading-pair-card *ngIf="bitflyer_tickerData" [tickerData]="bitflyer_tickerData"></trading-pair-card> -->
+  
+    <mat-grid-list *ngIf="exch_grid_cols" [cols]="exch_grid_cols" rowHeight="400px">
+        <mat-grid-tile>
+          <trading-pair-card *ngIf="gemini_tickerData" [tickerData]="gemini_tickerData"></trading-pair-card>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <trading-pair-card *ngIf="bitflyer_tickerData" [tickerData]="bitflyer_tickerData"></trading-pair-card>
+        </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div *ngIf="!appReady">
+    <mat-spinner class="spinner"></mat-spinner>
+  </div>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+
+
 
