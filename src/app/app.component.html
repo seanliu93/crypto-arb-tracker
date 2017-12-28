@@ -18,7 +18,7 @@
           </mat-grid-tile>
           <mat-grid-tile>
             <div class="mat-headline" [style.color]="getArbColor()">
-              {{ ((bitflyer_tickerData.price/113.24 / gemini_tickerData.price)-1) * 100}} %
+              {{ ((bitflyer_tickerData.price/113.24 / gemini_tickerData.price)-1) * 100 | number: '0.2-3'}} %
             </div>
           </mat-grid-tile>
           <mat-grid-tile class="mat-headline">

@@ -9,24 +9,12 @@ import { CryptoCompareService } from '../services/crypto-compare.service';
   templateUrl: './trading-pair-card.component.html',
   styleUrls: ['./trading-pair-card.component.css'],
   providers: [ CurrencyPipe ],
-  animations: [
-    trigger('green-blink', [
-      state('green', style({
-          color: 'green',
-      })),
-      state('normal', style({
-          color: 'black',
-      })),
-      transition('green => normal', animate('500ms ease-in')),
-    ]),
-  ]
 })
 export class TradingPairCardComponent implements OnInit {
 
   @Input() tickerData: TickerMessage;
-  blinkState: string;
   lastPrice: number;
-  priceColorState: string;
+  priceColor: string;
   constructor(private currencyPipe: CurrencyPipe, private cryptoCompareService: CryptoCompareService) { }
 
   ngOnInit() {
@@ -37,20 +25,16 @@ export class TradingPairCardComponent implements OnInit {
 
   ngOnChanges() {
     if (this.tickerData.price > this.lastPrice) {
-      this.priceColorState = "green";
+      this.priceColor = "green";
     }
     else if (this.tickerData.price < this.lastPrice) {
-      this.priceColorState = "red";
+      this.priceColor = "red";
     }
     else {
-      this.priceColorState = "normal";
+      this.priceColor = "black";
     }
+    this.lastPrice = this.tickerData.price;
     this.tickerData.lastUpdateDate = new Date(this.tickerData.lastUpdate*1000);
-  }
-
-  changeState() {
-    this.blinkState = 'green';
-    this.blinkState = 'normal';
   }
 
   getPrice(): string {

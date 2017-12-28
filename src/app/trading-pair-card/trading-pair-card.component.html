@@ -11,8 +11,8 @@
       <mat-list-item> Volume 24 Hrs: </mat-list-item>
     </mat-list>
     <mat-list class="right-half">
-        <mat-list-item [@green-blink]="blinkState" (click)="changeState()"> 
-          <div [class]="priceColorState">
+        <mat-list-item> 
+          <div [style.color]="priceColor">
             {{getPrice()}}
           </div> 
         </mat-list-item>

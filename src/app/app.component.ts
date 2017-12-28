@@ -4,6 +4,7 @@ import * as io from 'socket.io-client';
 import { CryptoCompareService, GEMINI_BTC_USD, BITFLYER_BTC_USD } from './services/crypto-compare.service';
 import { HttpClient } from '@angular/common/http';
 import { TimerObservable } from "rxjs/observable/TimerObservable";
+import { DecimalPipe } from '@angular/common';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 
 @Component({
