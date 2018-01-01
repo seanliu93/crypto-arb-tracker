@@ -20,12 +20,12 @@ export class CryptoCompareService {
   public exchangeRates: Map<string, number> = new Map<string, number>();
   private exchangesReady: boolean;
   private exchangeRatesReady: boolean;
-  // private arbPairData: ArbPair[];
   private arbPairDataStream: BehaviorSubject<ArbPair[]>;
+
   constructor(private http: HttpClient) {
     // get usd/jpy exchange rate and update every hr
     TimerObservable.create(0, HOUR_MS).subscribe(() => {
-      this.getUsdJpyRate().subscribe(data => {
+      this.getExchangeRates().subscribe(data => {
         // console.log("get USD_JPY_rate");
         // console.log(data);
         Object.keys(data.rates).forEach(toCurrency => {
@@ -75,7 +75,7 @@ export class CryptoCompareService {
           this.arbPairDataStream = new BehaviorSubject<ArbPair[]>([]);
         }
         if (this.exchangesReady) {
-          this.arbPairDataStream.next(this.initArbPairData());
+          this.arbPairDataStream.next(this.getArbPairData());
         }
       }
     });
@@ -90,7 +90,7 @@ export class CryptoCompareService {
   }
 
   // gets the pair combinations of the array
-  initArbPairData(): ArbPair[] {
+  getArbPairData(): ArbPair[] {
     let exchangeKeys: string[] = Array.from(this.exchangesMap.keys());
     let arbPairData = new Array<ArbPair>();
     // get the pair combinations of the array
@@ -145,7 +145,7 @@ export class CryptoCompareService {
     }
   }
 
-  getUsdJpyRate(): Observable<any> {
+  getExchangeRates(): Observable<any> {
     return this.http.get('https://api.fixer.io/latest?base=USD&symbols=JPY,KRW');
   }
 
@@ -154,12 +154,6 @@ export class CryptoCompareService {
     this.socket.disconnect();
   }
 }
-
-export const GEMINI_ETH_USD = '2~Gemini~ETH~USD';
-export const BITFLYER_ETH_JPY = '2~bitFlyer~ETH~JPY';
-export const BITFLYER_BTC_JPY = '2~bitFlyer~BTC~JPY'
-export const COINBASE_BTC_USD = '2~Coinbase~BTC~USD';
-export const COINBASE_ETH_USD = '2~Coinbase~ETH~USD';
 
 // cryptoCompare subscriptions
 export const CRYPTOCOMPARE_SUBSCRIPTIONS: string[] = [

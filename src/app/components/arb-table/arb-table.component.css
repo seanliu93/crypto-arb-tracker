@@ -9,3 +9,8 @@
 .mat-header-cell {
     font-weight: bold;
 }
+
+.arb-table-style {
+    overflow-x: auto;
+    min-width: 650px;
+}

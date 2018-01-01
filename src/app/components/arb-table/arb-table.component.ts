@@ -12,7 +12,6 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
   styleUrls: ['./arb-table.component.css']
 })
 export class ArbTableComponent implements OnInit {
-  // @Input() arbPairData: ArbPair[];
   dataSource: CryptoCompareDataSource | null;
   displayedColumns = ['trade_pair', 
                       'price_spread', 
@@ -27,24 +26,9 @@ export class ArbTableComponent implements OnInit {
   constructor(private cryptoCompareService: CryptoCompareService, private applicationRef: ApplicationRef) { }
 
   ngOnInit() {
-    // this.dataSource = new MatTableDataSource<ArbPair>(DUMMY_ARBPAIR_DATA);
-    // this.dataSource.data = this.arbPairData;
     this.dataSource = new CryptoCompareDataSource(this.cryptoCompareService, this.sort);
     console.log("Data source");
     console.log(this.dataSource);
-    // setTimeout(() => {
-    //   console.log("PUSHING NEW DATA");
-    //   this.arbPairData.push({
-    //     trade_pair: 'BLAH',
-    //     price_spread: .12,
-    //     buy_exchange_price: 12300,
-    //     buy_exchange_name: "Sean Ex",
-    //     sell_exchange_price: 12312,
-    //     sell_exchange_name: "Sean LOL",
-    //   })
-    //   this.dataSource.data = this.arbPairData;
-    //   // this.dataSource = new MatTableDataSource<ArbPair>();
-    // }, 5000);
   }
 
   ngAfterViewInit() {
@@ -52,7 +36,6 @@ export class ArbTableComponent implements OnInit {
       id: 'price_spread',
       start: 'desc'
     });
-    // this.dataSource.sort = this.sort;
   }
 
   getPriceSpreadCellColor(price_spread: number) {
@@ -75,7 +58,7 @@ export class CryptoCompareDataSource extends DataSource<any> {
   constructor(private cryptoCompareService: CryptoCompareService, private _sort: MatSort) { super(); }
 
   connect(): Observable<ArbPair[]> {
-    // Listen for any changes in the base data, sorting, filtering, or pagination
+    // Listen for any changes in the base data, sorting
     const displayDataChanges = [
       this.cryptoCompareService.getArbPairDataStream(),
       this._sort.sortChange, 
