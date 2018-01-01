@@ -1,46 +1,20 @@
 <div class="container" style="text-align:center">
 
-  <div *ngIf="appReady">
+  <div *ngIf="cryptoCompareService.isExchangesReady()">
     <div class="mat-display-1 title">
-      Crypto Arb Tracker
+      Crypto Arb Tracker [{{ getSupportedExchangesStr() }}]
     </div>
-    <div>
-      USD/JPY Exchange Rate: {{ cryptoCompareService.usd_jpy_rate }}
-    </div>
-    <mat-card>
-      <mat-card-header class="title">
-        <b>Best Arb</b>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-grid-list cols="3" rowHeight="100px">
-          <mat-grid-tile class="mat-headline">
-            {{ gemini_tickerData.exchangeName }} {{ gemini_tickerData.fromCurrency }} / {{ gemini_tickerData.toCurrency }}
-          </mat-grid-tile>
-          <mat-grid-tile>
-            <div class="mat-headline" [style.color]="getArbColor()">
-              {{ ((bitflyer_tickerData.price/113.24 / gemini_tickerData.price)-1) * 100 | number: '0.2-3'}} %
-            </div>
-          </mat-grid-tile>
-          <mat-grid-tile class="mat-headline">
-            {{ bitflyer_tickerData.exchangeName }}  {{ bitflyer_tickerData.fromCurrency }} / {{ bitflyer_tickerData.toCurrency }}
-          </mat-grid-tile>
-        </mat-grid-list>
-      </mat-card-content>
-    </mat-card>
+
+    <arb-table *ngIf="cryptoCompareService.arbPairDataStream"></arb-table>
     <br>
-    <!-- <trading-pair-card *ngIf="gemini_tickerData" [tickerData]="gemini_tickerData"></trading-pair-card>
-    <trading-pair-card *ngIf="bitflyer_tickerData" [tickerData]="bitflyer_tickerData"></trading-pair-card> -->
   
-    <mat-grid-list *ngIf="exch_grid_cols" [cols]="exch_grid_cols" rowHeight="400px">
-        <mat-grid-tile>
-          <trading-pair-card *ngIf="gemini_tickerData" [tickerData]="gemini_tickerData"></trading-pair-card>
-        </mat-grid-tile>
-        <mat-grid-tile>
-          <trading-pair-card *ngIf="bitflyer_tickerData" [tickerData]="bitflyer_tickerData"></trading-pair-card>
+    <mat-grid-list *ngIf="cryptoCompareService.isExchangesReady()" [cols]="exch_grid_cols" rowHeight="400px">
+        <mat-grid-tile *ngFor="let exchange_trd_pair of cryptoCompareService.exchangesMap.keys()">
+          <trading-pair-card [tickerData]="cryptoCompareService.exchangesMap.get(exchange_trd_pair)"></trading-pair-card>
         </mat-grid-tile>
     </mat-grid-list>
   </div>
-  <div *ngIf="!appReady">
+  <div *ngIf="!cryptoCompareService.isExchangesReady()">
     <mat-spinner class="spinner"></mat-spinner>
   </div>
 </div>

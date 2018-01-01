@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { TickerMessage } from '../app.component';
+import { TickerMessage } from '../../app.model';
 import { CurrencyPipe } from '@angular/common';
 import { trigger,state,style,transition,animate,keyframes } from '@angular/animations';
-import { CryptoCompareService } from '../services/crypto-compare.service';
+import { CryptoCompareService } from '../../services/crypto-compare.service';
 
 @Component({
   selector: 'trading-pair-card',
@@ -39,23 +39,26 @@ export class TradingPairCardComponent implements OnInit {
 
   getPrice(): string {
     if (this.tickerData.toCurrency == 'USD') {
-      return this.currencyPipe.transform(this.tickerData.price, this.tickerData.toCurrency, true);
+      return this.currencyPipe.transform(this.tickerData.price, this.tickerData.toCurrency, true, '0.2-2');
       // return "tickerData.price | currency:tickerData.toCurrency:true"
     }
     else {
+      let trade_pair_key: string = "USD_" + this.tickerData.toCurrency;
+    
       return this.currencyPipe.transform(this.tickerData.price, this.tickerData.toCurrency, true) + ' ( ' +
-        this.currencyPipe.transform(this.tickerData.price/this.cryptoCompareService.usd_jpy_rate, 'USD', true) + ' ) ';
+        this.currencyPipe.transform(this.tickerData.price/this.cryptoCompareService.exchangeRates.get(trade_pair_key), 'USD', true, '0.2-2') + ' ) ';
     }
   }
 
   getLastVolumeTo(): string {
     if (this.tickerData.toCurrency == 'USD') {
-      return this.currencyPipe.transform(this.tickerData.lastVolumeTo, this.tickerData.toCurrency, true);
+      return this.currencyPipe.transform(this.tickerData.lastVolumeTo, this.tickerData.toCurrency, true, '0.2-2');
       // return "tickerData.price | currency:tickerData.toCurrency:true"
     }
     else {
+      let trade_pair_key: string = "USD_" + this.tickerData.toCurrency;
       return this.currencyPipe.transform(this.tickerData.lastVolumeTo, this.tickerData.toCurrency, true) + ' ( ' +
-        this.currencyPipe.transform(this.tickerData.price/this.cryptoCompareService.usd_jpy_rate, 'USD', true) + ' ) ';
+        this.currencyPipe.transform(this.tickerData.lastVolumeTo/this.cryptoCompareService.exchangeRates.get(trade_pair_key), 'USD', true, '0.2-2') + ' ) ';
     }
   }
 

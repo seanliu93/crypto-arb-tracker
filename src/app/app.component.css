@@ -12,6 +12,11 @@
     color: green;
 }
 
+.buy-sell-label {
+    color: orange;
+    padding-right: 5px;
+}
+
 .center {
     text-align: center;
 }

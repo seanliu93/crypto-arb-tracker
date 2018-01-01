@@ -1,0 +1,11 @@
+.mat-cell, .mat-header-cell {
+    flex: 1;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mat-header-cell {
+    font-weight: bold;
+}
