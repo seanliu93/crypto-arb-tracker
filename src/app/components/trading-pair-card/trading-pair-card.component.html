@@ -1,6 +1,6 @@
-<mat-card class="container">
+<mat-card *ngIf="isCardReady()" class="container">
   <mat-card-header class="white">
-    <b>{{ tickerData.exchangeName}} {{ tickerData.fromCurrency}} / {{ tickerData.toCurrency }}</b>
+    <b>{{ tickerData.MARKET}} {{ tickerData.FROMSYMBOL}} / {{ tickerData.TOSYMBOL }}</b>
   </mat-card-header>
   <mat-card-content class="content-container ">
     <mat-list class="left-half">
@@ -16,10 +16,10 @@
             {{getPrice()}}
           </div> 
         </mat-list-item>
-        <mat-list-item> {{tickerData.lastUpdateDate | date :'dd-MMM-yyyy hh:mm:ss z'}} </mat-list-item>
-        <mat-list-item> {{tickerData.lastVolume}} {{tickerData.fromCurrency}}</mat-list-item>
+        <mat-list-item> {{lastUpdateDate | date :'dd-MMM-yyyy hh:mm:ss z'}} </mat-list-item>
+        <mat-list-item> {{tickerData.LASTVOLUME}} {{tickerData.FROMSYMBOL}}</mat-list-item>
         <mat-list-item> {{getLastVolumeTo()}} </mat-list-item>
-        <mat-list-item> {{tickerData.volume24H}} {{tickerData.fromCurrency}} </mat-list-item>
+        <mat-list-item> {{tickerData.VOLUME24HOUR}} {{tickerData.FROMSYMBOL}} </mat-list-item>
       </mat-list>
   </mat-card-content>
 </mat-card>

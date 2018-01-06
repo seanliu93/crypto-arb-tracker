@@ -1,6 +1,5 @@
 <div class="container" style="text-align:center">
-
-  <div *ngIf="cryptoCompareService.isExchangesReady()">
+  <div >
     <div class="mat-display-1 title">
       Crypto Arb Tracker [{{ getSupportedExchangesStr() }}]
     </div>
@@ -9,15 +8,11 @@
     </div>
     <br>
   
-    <mat-grid-list *ngIf="cryptoCompareService.isExchangesReady()" [cols]="exch_grid_cols" rowHeight="400px">
+    <mat-grid-list  [cols]="exch_grid_cols" rowHeight="400px">
         <mat-grid-tile *ngFor="let exchange_trd_pair of cryptoCompareService.exchangesMap.keys()">
           <trading-pair-card [tickerData]="cryptoCompareService.exchangesMap.get(exchange_trd_pair)"></trading-pair-card>
         </mat-grid-tile>
     </mat-grid-list>
-  </div>
-
-  <div *ngIf="!cryptoCompareService.isExchangesReady()">
-    <mat-spinner class="spinner"></mat-spinner>
   </div>
 </div>
 

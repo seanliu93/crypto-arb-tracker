@@ -4,11 +4,12 @@ import {Injectable} from '@angular/core';
 import * as io from 'socket.io-client';
 import { HttpClient } from '@angular/common/http';
 import { TimerObservable } from "rxjs/observable/TimerObservable";
-import { TickerMessage, ArbPair } from '../app.model';
+import { ArbPair, CCCType, FLAG_PRICEDOWN, FLAG_PRICEUP, FLAG_PRICEUNCHANGED } from '../app.model';
 
 const CRYPTO_COMPARE_URL = 'wss://streamer.cryptocompare.com';
 const HOUR_MS = 1000*60*60;
 
+declare var CCC: any;
 @Injectable()
 export class CryptoCompareService {
   // socket connection to cryptoCompare websocket api
@@ -16,13 +17,12 @@ export class CryptoCompareService {
   // usd/jpy exchange rate
   public usd_jpy_rate: number;
   // exchange data keyed by exchangeName
-  public exchangesMap: Map<string, TickerMessage> = new Map<string, TickerMessage>();
+  public exchangesMap: Map<string, CCCType> = new Map<string, CCCType>();
   public exchangeRates: Map<string, number> = new Map<string, number>();
-  private exchangesReady: boolean;
-  private exchangeRatesReady: boolean;
-  private arbPairDataStream: BehaviorSubject<ArbPair[]>;
+  public arbPairDataStream: BehaviorSubject<ArbPair[]>;
 
   constructor(private http: HttpClient) {
+    this.arbPairDataStream = new BehaviorSubject<ArbPair[]>([]);
     // get usd/jpy exchange rate and update every hr
     TimerObservable.create(0, HOUR_MS).subscribe(() => {
       this.getExchangeRates().subscribe(data => {
@@ -36,20 +36,39 @@ export class CryptoCompareService {
         });
       })
     });
+    this.getInitialPrices();
     this.getCurrentPrices();
     // this.getPairs(['a', 'b', 'c', 'd'])
   }
   
-  isExchangesReady() {
-    return this.exchangesReady;
-  }
-
-  isExchangeRatesReady() {
-    return this.exchangeRatesReady;
+  getInitialPrices() {
+    CRYPTOCOMPARE_SUBSCRIPTIONS.forEach((sub) => {
+      let subArray = sub.split("~");
+      let exchangeName = subArray[1];
+      let fromCurrency = subArray[2];
+      let toCurrency = subArray[3];
+      this.getPrice(fromCurrency, toCurrency, exchangeName).subscribe((response) => {
+        let key: string = exchangeName+"_"+fromCurrency+"_"+toCurrency;
+        let price: number = response[toCurrency];
+        this.exchangesMap.set(key, {
+          FLAGS: null,
+          FROMSYMBOL: null,
+          LASTTRADEID: null,
+          LASTUPDATE: null,
+          LASTVOLUME: null,
+          LASTVOLUMETO: null,
+          MARKET: null,
+          PRICE: price,
+          TOSYMBOL: null,
+          TYPE: null,
+          VOLUME24HOUR: null,
+          VOLUME24HOURTO: null
+        })
+      })
+    })
   }
   // get current prices using cryptoCompare's websocket api. populates exchangesMap
   getCurrentPrices() {
-    console.log("in pricesObs");
     if (this.socket) {
       this.socket.disconnect();
     }
@@ -63,22 +82,35 @@ export class CryptoCompareService {
     this.socket.on('m', (data) => {
       // let msgArray = data.split("~");
       // console.log(msgArray[1]+": "+msgArray[5]);
-      let tickerData: TickerMessage = new TickerMessage(data);
       // console.log(tickerData.exchangeName+": "+tickerData.price);
-      if (tickerData.exchangeName != 'LOADCOMPLETE') {
-        let key: string = tickerData.exchangeName+"_"+tickerData.fromCurrency+"_"+tickerData.toCurrency;
+      let cccObj: CCCType = CCC.CURRENT.unpack(data);
+      if (cccObj.MARKET != 'LOADCOMPLETE') {
+        let key: string = cccObj.MARKET+"_"+cccObj.FROMSYMBOL+"_"+cccObj.TOSYMBOL;
         // console.log("setting key: "+key);
-        this.exchangesMap.set(key, tickerData);
-        if (this.exchangesMap.size == CRYPTOCOMPARE_SUBSCRIPTIONS.length && !this.exchangesReady) {
-          console.log("EXCHANGES READY");
-          this.exchangesReady = true;
-          this.arbPairDataStream = new BehaviorSubject<ArbPair[]>([]);
-        }
-        if (this.exchangesReady) {
-          this.arbPairDataStream.next(this.getArbPairData());
-        }
+        // if (tickerData.flag != 4) {
+          if (cccObj.FLAGS == FLAG_PRICEUNCHANGED) {
+            // price unchanged
+            if (this.exchangesMap.has(key)) {
+              let lastPrice: number = this.exchangesMap.get(key).PRICE;
+              if (lastPrice) {
+                cccObj.PRICE = lastPrice;
+                this.exchangesMap.set(key, cccObj);
+              } 
+            }
+          }
+          else {
+            this.exchangesMap.set(key, cccObj);
+          }
+
+        // }
+        this.arbPairDataStream.next(this.getArbPairData());
+        
       }
     });
+  }
+
+  getPrice(fromCurrency: string, toCurrency: string, exchange: string): Observable<any> {
+    return this.http.get('https://min-api.cryptocompare.com/data/price?fsym='+fromCurrency+'&tsyms='+toCurrency+'&e='+exchange);
   }
 
   getArbPairDataStream(): BehaviorSubject<ArbPair[]> {
@@ -101,9 +133,9 @@ export class CryptoCompareService {
         let fromCurrency1: string = keyPair1.split("_")[1];
         let fromCurrency2: string = keyPair2.split("_")[1];
         if (fromCurrency1 == fromCurrency2) {
-          let trdPair1: TickerMessage = this.exchangesMap.get(keyPair1);
-          let trdPair2: TickerMessage = this.exchangesMap.get(keyPair2);
-          if (trdPair1.price < trdPair2.price) {
+          let trdPair1: CCCType = this.exchangesMap.get(keyPair1);
+          let trdPair2: CCCType = this.exchangesMap.get(keyPair2);
+          if (trdPair1.PRICE < trdPair2.PRICE) {
             let temp = trdPair1;
             trdPair1 = trdPair2;
             trdPair2 = temp;
@@ -116,32 +148,30 @@ export class CryptoCompareService {
             trade_pair: fromCurrency1+" / USD",
             price_spread: price_spread,
             buy_exchange_price: trdPair2Price,
-            buy_exchange_name: trdPair2.exchangeName,
+            buy_exchange_name: trdPair2.MARKET,
             sell_exchange_price: trdPair1Price,
-            sell_exchange_name: trdPair1.exchangeName,
+            sell_exchange_name: trdPair1.MARKET,
             conversions: "None"
           };
-          if (trdPair1.toCurrency != 'USD' || trdPair2.toCurrency != 'USD') {
-            let toCurrency: string = trdPair1.toCurrency != 'USD' ? trdPair1.toCurrency : trdPair2.toCurrency;
+
+          if (trdPair1.TOSYMBOL != 'USD' || trdPair2.TOSYMBOL != 'USD') {
+            let toCurrency: string = trdPair1.TOSYMBOL != 'USD' ? trdPair1.TOSYMBOL : trdPair2.TOSYMBOL;
             arbPair.conversions = "USD / "+toCurrency+": "+this.exchangeRates.get('USD_'+toCurrency);
           }
           arbPairData.push(arbPair);
-          // console.log(price_spread);
-          // console.log(fromCurrency1+" Spread "+trdPair1.exchangeName+" to "+trdPair2.exchangeName+": "+price_spread*100+"%");
-          // console.log(fromCurrency1+" Spread "+trdPair1.exchangeName+" to "+trdPair2.exchangeName+": "+trdPair1Price+"-"+trdPair2Price);
         }
       }
     }
     return arbPairData;
   }
 
-  getUsdPrice(tickerMessage: TickerMessage): number {
-    if (tickerMessage.toCurrency != 'USD') {
-      let exchangeRateKey: string = 'USD_'+tickerMessage.toCurrency;
-      return tickerMessage.price/this.exchangeRates.get(exchangeRateKey);
+  getUsdPrice(tickerMessage: CCCType): number {
+    if (tickerMessage.TOSYMBOL != 'USD') {
+      let exchangeRateKey: string = 'USD_'+tickerMessage.TOSYMBOL;
+      return tickerMessage.PRICE/this.exchangeRates.get(exchangeRateKey);
     }
     else {
-      return tickerMessage.price;
+      return tickerMessage.PRICE;
     }
   }
 

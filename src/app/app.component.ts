@@ -6,7 +6,6 @@ import { HttpClient } from '@angular/common/http';
 import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { DecimalPipe } from '@angular/common';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import { TickerMessage } from './app.model';
 
 @Component({
   selector: 'app-root',
@@ -17,9 +16,6 @@ import { TickerMessage } from './app.model';
 })
 export class AppComponent {
   title = 'app';
-  appReady: boolean;
-  gemini_tickerData: TickerMessage;
-  bitflyer_tickerData: TickerMessage;
   arb_percent: number;
   exch_grid_cols: number;
   exch_rate_cols: number;

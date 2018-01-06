@@ -3,7 +3,7 @@ import { MatTableDataSource, MatSort, Sort, MatSortable } from '@angular/materia
 import { DataSource } from '@angular/cdk/collections';
 
 import { CryptoCompareService } from '../../services/crypto-compare.service';
-import { TickerMessage, ArbPair } from '../../app.model';
+import { ArbPair } from '../../app.model';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
 @Component({
