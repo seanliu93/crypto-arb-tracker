@@ -5,6 +5,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { CryptoCompareService } from '../../services/crypto-compare.service';
 import { ArbPair } from '../../app.model';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { AppStateService } from '../../services/app-state.service';
 
 @Component({
   selector: 'arb-table',
@@ -12,7 +13,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
   styleUrls: ['./arb-table.component.css']
 })
 export class ArbTableComponent implements OnInit {
-  dataSource: CryptoCompareDataSource | null;
+  dataSource: ArbTableDataSource | null;
   displayedColumns = ['trade_pair', 
                       'price_spread', 
                       'buy_exchange_price', 
@@ -23,10 +24,10 @@ export class ArbTableComponent implements OnInit {
 ];
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private cryptoCompareService: CryptoCompareService, private applicationRef: ApplicationRef) { }
+  constructor(private appStateService: AppStateService, private cryptoCompareService: CryptoCompareService, private applicationRef: ApplicationRef) { }
 
   ngOnInit() {
-    this.dataSource = new CryptoCompareDataSource(this.cryptoCompareService, this.sort);
+    this.dataSource = new ArbTableDataSource(this.appStateService, this.sort);
     console.log("Data source");
     console.log(this.dataSource);
   }
@@ -52,22 +53,22 @@ export class ArbTableComponent implements OnInit {
 
 }
 
-export class CryptoCompareDataSource extends DataSource<any> {
+export class ArbTableDataSource extends DataSource<any> {
   dataSourceDestroyed$: Subject<boolean> = new Subject();
 
-  constructor(private cryptoCompareService: CryptoCompareService, private _sort: MatSort) { super(); }
+  constructor(private appStateService: AppStateService, private _sort: MatSort) { super(); }
 
   connect(): Observable<ArbPair[]> {
     // Listen for any changes in the base data, sorting
     const displayDataChanges = [
-      this.cryptoCompareService.getArbPairDataStream(),
+      this.appStateService.getArbPairDataStream(),
       this._sort.sortChange, 
     ];
     console.log("subscribing to arbPair data stream");
     return Observable.merge(...displayDataChanges).map(() => {
 
       // Sort filtered data
-      const sortedData = this.sortData(this.cryptoCompareService.getArbPairDataStream().value);
+      const sortedData = this.sortData(this.appStateService.getArbPairDataStream().value);
 
       return sortedData;
     });

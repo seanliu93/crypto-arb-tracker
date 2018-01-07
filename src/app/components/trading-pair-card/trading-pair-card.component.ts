@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { trigger,state,style,transition,animate,keyframes } from '@angular/animations';
-import { CryptoCompareService } from '../../services/crypto-compare.service';
 import { CCCType, FLAG_PRICEDOWN, FLAG_PRICEUP, FLAG_PRICEUNCHANGED} from '../../app.model';
 
 @Component({
@@ -13,9 +12,11 @@ import { CCCType, FLAG_PRICEDOWN, FLAG_PRICEUP, FLAG_PRICEUNCHANGED} from '../..
 export class TradingPairCardComponent implements OnInit {
 
   @Input() tickerData: CCCType;
+  @Input() exchangeRates: Map<string, number>;
+
   lastUpdateDate: Date;
   priceColor: string;
-  constructor(private currencyPipe: CurrencyPipe, private cryptoCompareService: CryptoCompareService) { }
+  constructor(private currencyPipe: CurrencyPipe) { }
 
   ngOnInit() {
     console.log("Showing tickerData...");
@@ -36,18 +37,13 @@ export class TradingPairCardComponent implements OnInit {
   }
 
   isCardReady(): boolean {
-    return this.tickerData.FLAGS != null && 
-      this.tickerData.FROMSYMBOL != null && 
-      this.tickerData.LASTTRADEID != null && 
+    return this.tickerData.FROMSYMBOL != null && 
       this.tickerData.LASTUPDATE != null && 
       this.tickerData.LASTVOLUME != null && 
-      this.tickerData.LASTVOLUMETO != null && 
       this.tickerData.MARKET != null && 
       this.tickerData.PRICE != null && 
       this.tickerData.TOSYMBOL != null && 
-      this.tickerData.TYPE != null && 
-      this.tickerData.VOLUME24HOUR != null && 
-      this.tickerData.VOLUME24HOURTO != null;
+      this.tickerData.VOLUME24HOUR != null;
   }
 
   getPrice(): string {
@@ -59,7 +55,7 @@ export class TradingPairCardComponent implements OnInit {
       let trade_pair_key: string = "USD_" + this.tickerData.TOSYMBOL;
     
       return this.currencyPipe.transform(this.tickerData.PRICE, this.tickerData.TOSYMBOL, true) + ' ( ' +
-        this.currencyPipe.transform(this.tickerData.PRICE/this.cryptoCompareService.exchangeRates.get(trade_pair_key), 'USD', true, '0.2-2') + ' ) ';
+        this.currencyPipe.transform(this.tickerData.PRICE/this.exchangeRates.get(trade_pair_key), 'USD', true, '0.2-2') + ' ) ';
     }
   }
 
@@ -71,7 +67,7 @@ export class TradingPairCardComponent implements OnInit {
     else {
       let trade_pair_key: string = "USD_" + this.tickerData.TOSYMBOL;
       return this.currencyPipe.transform(this.tickerData.LASTVOLUMETO, this.tickerData.TOSYMBOL, true) + ' ( ' +
-        this.currencyPipe.transform(this.tickerData.LASTVOLUMETO/this.cryptoCompareService.exchangeRates.get(trade_pair_key), 'USD', true, '0.2-2') + ' ) ';
+        this.currencyPipe.transform(this.tickerData.LASTVOLUMETO/this.exchangeRates.get(trade_pair_key), 'USD', true, '0.2-2') + ' ) ';
     }
   }
 

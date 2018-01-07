@@ -4,13 +4,13 @@
       Crypto Arb Tracker [{{ getSupportedExchangesStr() }}]
     </div>
     <div class="arb-table-container">
-      <arb-table *ngIf="cryptoCompareService.arbPairDataStream" class="arb-table-style"></arb-table>
+      <arb-table *ngIf="appStateService.arbPairDataStream" class="arb-table-style"></arb-table>
     </div>
     <br>
   
     <mat-grid-list  [cols]="exch_grid_cols" rowHeight="400px">
-        <mat-grid-tile *ngFor="let exchange_trd_pair of cryptoCompareService.exchangesMap.keys()">
-          <trading-pair-card [tickerData]="cryptoCompareService.exchangesMap.get(exchange_trd_pair)"></trading-pair-card>
+        <mat-grid-tile *ngFor="let exchange_trd_pair of appStateService.exchangesMap.keys()">
+          <trading-pair-card [tickerData]="appStateService.exchangesMap.get(exchange_trd_pair)" [exchangeRates]="appStateService.exchangeRates"></trading-pair-card>
         </mat-grid-tile>
     </mat-grid-list>
   </div>

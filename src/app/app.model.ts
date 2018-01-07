@@ -18,6 +18,28 @@ export interface CCCType {
   VOLUME24HOURTO: number;
 }
 
+export interface TradePairTick {
+  price: number;
+  fromCurrency: string;
+  toCurrency: string;
+  lastUpdate: number;
+  lastVolume: number;
+  lastVolumeTo: number;
+  market: string;
+  volume24Hr: number;
+  volume24HrTo: number;
+}
+
+export interface GDAXRestType {
+  ask: string;
+  bid: string;
+  price: string;
+  size: string;
+  time: string;
+  trade_id: number;
+  volume: string;
+}
+
 // object structure for a row in the price spread table
 export interface ArbPair {
   trade_pair: string;

@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CryptoCompareService } from './services/crypto-compare.service';
+import { GdaxService } from './services/gdax.service';
+import { AppStateService } from './services/app-state.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
@@ -35,7 +37,7 @@ import {MatSortModule} from '@angular/material/sort';
     MatTableModule,
     MatSortModule
   ],
-  providers: [ CryptoCompareService ],
+  providers: [ CryptoCompareService, GdaxService, AppStateService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
