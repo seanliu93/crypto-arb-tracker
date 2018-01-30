@@ -193,5 +193,6 @@ export const CRYPTOCOMPARE_SUBSCRIPTIONS: string[] = [
   '2~Coinbase~BTC~USD',
   '2~Coinbase~ETH~USD',
   '2~Bithumb~ETH~KRW',
-  '2~Bithumb~BTC~KRW'
+  '2~Bithumb~BTC~KRW',
+  '2~Coincheck~BTC~JPY'
 ]
