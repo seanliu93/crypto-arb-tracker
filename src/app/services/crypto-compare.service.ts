@@ -135,14 +135,16 @@ export class CryptoCompareService {
         if (fromCurrency1 == fromCurrency2) {
           let trdPair1: CCCType = this.exchangesMap.get(keyPair1);
           let trdPair2: CCCType = this.exchangesMap.get(keyPair2);
-          if (trdPair1.PRICE < trdPair2.PRICE) {
-            let temp = trdPair1;
-            trdPair1 = trdPair2;
-            trdPair2 = temp;
-          }
           let trdPair1Price: number = this.getUsdPrice(trdPair1);
           let trdPair2Price: number = this.getUsdPrice(trdPair2);
-
+          if (trdPair1Price < trdPair2Price) {
+            let tempPrice = trdPair1Price;
+            trdPair1Price = trdPair2Price;
+            trdPair2Price = tempPrice;
+            let tempPair = trdPair1;
+            trdPair1 = trdPair2;
+            trdPair2 = tempPair;
+          }
           let price_spread = trdPair1Price/trdPair2Price - 1;
           let arbPair: ArbPair = {
             trade_pair: fromCurrency1+" / USD",
