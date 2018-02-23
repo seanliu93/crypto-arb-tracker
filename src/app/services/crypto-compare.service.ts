@@ -7,7 +7,7 @@ import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { ArbPair, CCCType, FLAG_PRICEDOWN, FLAG_PRICEUP, FLAG_PRICEUNCHANGED } from '../app.model';
 
 const CRYPTO_COMPARE_URL = 'wss://streamer.cryptocompare.com';
-const HOUR_MS = 1000*60*60;
+const MINUTE_MS = 1000*60;
 
 declare var CCC: any;
 @Injectable()
@@ -24,16 +24,24 @@ export class CryptoCompareService {
   constructor(private http: HttpClient) {
     this.arbPairDataStream = new BehaviorSubject<ArbPair[]>([]);
     // get usd/jpy exchange rate and update every hr
-    TimerObservable.create(0, HOUR_MS).subscribe(() => {
+    TimerObservable.create(0, MINUTE_MS).subscribe(() => {
       this.getExchangeRates().subscribe(data => {
+        console.log(data);
         // console.log("get USD_JPY_rate");
         // console.log(data);
-        Object.keys(data.rates).forEach(toCurrency => {
-          let key = "USD_"+toCurrency;
-          let value = data.rates[toCurrency];
-          this.exchangeRates.set(key, value);
-          console.log("set rate for "+key);
-        });
+        if (data.success) {
+          Object.keys(data.quotes).forEach(currencyPair => {
+            let toCurrency = currencyPair.slice(3,currencyPair.length);
+            let key = "USD_"+toCurrency;
+            let value = data.quotes[currencyPair];
+            this.exchangeRates.set(key, value);
+            console.log("set rate for "+key);
+          });
+        }
+        else {
+            console.log("ERROR: API QUERY FOR CURRENCYLAYER FAILED");
+        }
+
       })
     });
     this.getInitialPrices();
@@ -181,7 +189,7 @@ export class CryptoCompareService {
   }
 
   getExchangeRates(): Observable<any> {
-    return this.http.get('https://api.fixer.io/latest?base=USD&symbols=JPY,KRW');
+    return this.http.get('https://apilayer.net/api/live?access_key=f67ac08d7dc93d0e0e039e6fcb4b7f27&currencies=JPY,KRW&source=USD&format=1');
   }
 
   onDestroy() {
