@@ -7,7 +7,7 @@ import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { ArbPair, CCCType, FLAG_PRICEDOWN, FLAG_PRICEUP, FLAG_PRICEUNCHANGED } from '../app.model';
 
 const CRYPTO_COMPARE_URL = 'wss://streamer.cryptocompare.com';
-const MINUTE_MS = 1000*60;
+const TEN_MINUTE_MS = 1000*60*10;
 
 declare var CCC: any;
 @Injectable()
@@ -24,7 +24,7 @@ export class CryptoCompareService {
   constructor(private http: HttpClient) {
     this.arbPairDataStream = new BehaviorSubject<ArbPair[]>([]);
     // get usd/jpy exchange rate and update every hr
-    TimerObservable.create(0, MINUTE_MS).subscribe(() => {
+    TimerObservable.create(0, TEN_MINUTE_MS).subscribe(() => {
       this.getExchangeRates().subscribe(data => {
         console.log(data);
         // console.log("get USD_JPY_rate");
