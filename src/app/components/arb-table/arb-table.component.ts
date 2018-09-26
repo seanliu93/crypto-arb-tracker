@@ -17,11 +17,14 @@ export class ArbTableComponent implements OnInit {
                       'price_spread', 
                       'buy_exchange_price', 
                       'buy_exchange_name', 
+                      // 'buy',
+                      // 'sell',
                       'sell_exchange_price', 
                       'sell_exchange_name',
                       'conversions'
 ];
   @ViewChild(MatSort) sort: MatSort;
+  @Input() groupByActive: boolean;
 
   constructor(private cryptoCompareService: CryptoCompareService, private applicationRef: ApplicationRef) { }
 
@@ -36,14 +39,19 @@ export class ArbTableComponent implements OnInit {
       id: 'price_spread',
       start: 'desc'
     });
+    this.sort.sortChange.subscribe(val => {
+      console.log('sort change val');
+      console.log(val)
+      console.log(this.sort);
+    });
   }
 
   getPriceSpreadCellColor(price_spread: number) {
     if (price_spread > 0) {
-      return "rgb(221,255,203)";
+      return "#7EC17E";
     }
     else if (price_spread < 0) {
-      return "red";
+      return "#ED7171";
     }
     else {
       return "white";
@@ -65,14 +73,14 @@ export class CryptoCompareDataSource extends DataSource<any> {
     ];
     console.log("subscribing to arbPair data stream");
     return Observable.merge(...displayDataChanges).map(() => {
-
       // Sort filtered data
-      const sortedData = this.sortData(this.cryptoCompareService.getArbPairDataStream().value);
-
+      const sortedData = this.sortData(this.cryptoCompareService.getArbPairDataStream().value, this._sort);
       return sortedData;
     });
     // return this.cryptoCompareService.getArbPairDataStream();
   }
+
+  
 
   disconnect() { 
     this.dataSourceDestroyed$.next(true);
@@ -80,17 +88,14 @@ export class CryptoCompareDataSource extends DataSource<any> {
   }
 
   /** Returns a sorted copy of the database data. */
-  sortData(data: ArbPair[]): ArbPair[] {
+  sortData(data: ArbPair[], sort: MatSort): ArbPair[] {
     if (!this._sort.active || this._sort.direction == '') { return data; }
 
     return data.sort((a, b) => {
       let propertyA: number|string = '';
       let propertyB: number|string = '';
 
-      switch (this._sort.active) {
-        case 'price_spread': [propertyA, propertyB] = [a.price_spread, b.price_spread]; break;;
-      }
-
+      [propertyA, propertyB] = [a[sort.active], b[sort.active]];
       let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
       let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
 

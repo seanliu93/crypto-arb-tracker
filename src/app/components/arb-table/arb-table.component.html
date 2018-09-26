@@ -4,37 +4,37 @@
           The actual rendered columns are set as a property on the row definition" -->
 
     <ng-container matColumnDef="trade_pair">
-      <mat-header-cell *matHeaderCellDef> Trade Pair </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Trade Pair </mat-header-cell>
       <mat-cell *matCellDef="let arbpair"> {{arbpair.trade_pair}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="price_spread">
-      <mat-header-cell *matHeaderCellDef mat-sort-header start="desc"> Price Spread </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Price Spread </mat-header-cell>
       <mat-cell *matCellDef="let arbpair" [style.background-color]="getPriceSpreadCellColor(arbpair.price_spread)"><b>{{arbpair.price_spread | percent:'0.2-4' }}</b></mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="buy_exchange_price">
-      <mat-header-cell *matHeaderCellDef> Buy Exchange Price </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Buy Exchange Price </mat-header-cell>
       <mat-cell *matCellDef="let arbpair"> {{arbpair.buy_exchange_price | currency:'USD':true}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="buy_exchange_name">
-      <mat-header-cell *matHeaderCellDef> Buy Exchange Name </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Buy Exchange Name </mat-header-cell>
       <mat-cell *matCellDef="let arbpair"> {{arbpair.buy_exchange_name}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="sell_exchange_price">
-      <mat-header-cell *matHeaderCellDef> Sell Exchange Price </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Sell Exchange Price </mat-header-cell>
       <mat-cell *matCellDef="let arbpair"> {{arbpair.sell_exchange_price | currency:'USD':true}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="sell_exchange_name">
-      <mat-header-cell *matHeaderCellDef> Sell Exchange Name </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Sell Exchange Name </mat-header-cell>
       <mat-cell *matCellDef="let arbpair"> {{arbpair.sell_exchange_name}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="conversions">
-      <mat-header-cell *matHeaderCellDef> Required Conversions </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Required Conversions </mat-header-cell>
       <mat-cell *matCellDef="let arbpair"> {{arbpair.conversions}} </mat-cell>
     </ng-container>
 

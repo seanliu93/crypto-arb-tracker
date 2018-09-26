@@ -19,6 +19,8 @@ export class AppComponent {
   arb_percent: number;
   exch_grid_cols: number;
   exch_rate_cols: number;
+  groupByActive = false;
+  
   constructor(public cryptoCompareService: CryptoCompareService, private http: HttpClient, private breakpointObserver: BreakpointObserver) {
     console.log("starting cryptocompare service...");
     breakpointObserver.observe([

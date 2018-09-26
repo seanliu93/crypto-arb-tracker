@@ -4,7 +4,7 @@
       Crypto Arb Tracker [{{ getSupportedExchangesStr() }}]
     </div>
     <div class="arb-table-container">
-      <arb-table *ngIf="cryptoCompareService.arbPairDataStream" class="arb-table-style"></arb-table>
+      <arb-table *ngIf="cryptoCompareService.arbPairDataStream" [groupByActive]="groupByActive" class="arb-table-style"></arb-table>
     </div>
     <br>
   
